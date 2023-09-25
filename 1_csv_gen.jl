@@ -66,7 +66,7 @@ for idx in 0:(num_files-1)
 end
 
 ## To visualize one of these "sin bundles"
-using Plots
+using Plots; plotly()
 begin
     m, sinusoids = generate_sin_bundle()
     plot(sinusoids[:, 1:3])

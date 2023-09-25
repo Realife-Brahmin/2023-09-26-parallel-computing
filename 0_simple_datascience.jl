@@ -1,4 +1,5 @@
 using Plots, CSV, MultivariateStats
+plotly()
 
 ## Setup parameters
 begin
