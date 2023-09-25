@@ -6,7 +6,7 @@ begin
     # We're going to generate a bunch of noisy, random-frequency sinusoids
     # in each file, and we'll do some processing of those sinusoids
     num_files = 30
-    num_sinusoids = 200 # Set this to `2000` for the big CSVs
+    num_sinusoids = 2_000 # Set this to `2000` for the big CSVs
     if num_sinusoids >= 2000
         output_dir = @get_scratch!("generated_csvs")
     else
