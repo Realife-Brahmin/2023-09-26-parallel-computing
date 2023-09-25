@@ -5,7 +5,7 @@ using CSV, Plots, Scratch, Statistics, MultivariateStats, DataFrames
 # we can more easily see the difference between our different threading
 # regimes.
 function load_csv(path)
-    return CSV.read(path, DataFrame; threaded=false)
+    return CSV.read(path, DataFrame; ntasks=1)
 end
 
 # Sample correlation measure.  Doesn't do any shifting
