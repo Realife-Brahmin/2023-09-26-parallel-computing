@@ -7,10 +7,9 @@ using JuliaHub, DataSets
 
 data_dir = tempname()
 dataset_user = "jacob_vaverka2"
-dataset_name = "parallel-computing-sinusoids"
-results_dir = tempname()
-ENV["RESULTS_FILE"] = results_dir
-plot_dir = joinpath(results_dir, "plot_outputs")
+dataset_name = "parallel_computing_sinusoids"
+plot_dir = tempname()
+ENV["RESULTS_FILE"] = plot_dir
 
 !ispath(data_dir) && mkpath(data_dir)
 !ispath(plot_dir) && mkpath(plot_dir)

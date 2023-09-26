@@ -71,7 +71,7 @@ plotlyjs()
 begin
     m, sinusoids = generate_sin_bundle()
     plot(sinusoids[:, 1:3])
-    results_file = "sine_bundle.png"
-    savefig(results_file)
-    ENV["RESULTS_FILE"] = results_file
+    # results_file = "sine_bundle.png"
+    # savefig(results_file)
+    # ENV["RESULTS_FILE"] = results_file
 end

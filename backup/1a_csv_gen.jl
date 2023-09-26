@@ -1,13 +1,12 @@
 @info("Loading packages...")
-using Distributed
-@everywhere using CSV, Scratch, DSP, DataFrames, Printf
+using CSV, Scratch, DSP, DataFrames, Printf, JSON3
 
 ## Setup parameters
-@everywhere begin
+begin
     # We're going to generate a bunch of noisy, random-frequency sinusoids
     # in each file, and we'll do some processing of those sinusoids
     num_files = 30
-    num_sinusoids = parse(Int32, get(ENV, "NUM_SINUSOIDS", "200")) # Set this to `2000` for the big CSVs
+    num_sinusoids = parse(Int32, get(ENV, "NUM_SINUSOIDS", "200"))  # Set this to `2000` for the big CSVs
     if num_sinusoids >= 2_000
         output_dir = @get_scratch!("generated_csvs")
     else
@@ -23,7 +22,7 @@ using Distributed
 end
 
 ## Helper function to generate a randomly-walking sinusoid
-@everywhere function generate_sinusoid(N, fs, wc, fr_amnt, fm_amnt, noise_amnt)
+function generate_sinusoid(N, fs, wc, fr_amnt, fm_amnt, noise_amnt)
     t = 2π*(0:(N-1))/fs
 
     # if we have some frequency modulation, we apply a sinusoidal
@@ -34,12 +33,12 @@ end
     return sin.(ω .+ ϕ) .+ (noise_amnt * rand()) .* randn(N)
 end
 
-@everywhere function generate_mod_envelope(N, amnt)
+function generate_mod_envelope(N, amnt)
     m = resample(amnt * randn(8) .+ (1 - amnt), N/3)
     return m[1:N]
 end
 
-@everywhere function generate_sin_bundle(N, K, fs, wc, fr_amnt, fm_amnt, noise_amnt)
+function generate_sin_bundle(N, K, fs, wc, fr_amnt, fm_amnt, noise_amnt)
     # First, generate a modulation envelope that we'll apply to each sinusoid
     m = generate_mod_envelope(N, 0.3)
 
@@ -50,9 +49,9 @@ end
     end
     return m, sinusoids
 end
-@everywhere generate_sin_bundle() = generate_sin_bundle(num_datapoints, num_sinusoids, fs, center_frequency, frequency_randomization_amount, frequency_modulation_amount, noise_amount)
+generate_sin_bundle() = generate_sin_bundle(num_datapoints, num_sinusoids, fs, center_frequency, frequency_randomization_amount, frequency_modulation_amount, noise_amount)
 
-@everywhere function generate_csv_file(idx)
+function generate_csv_file(idx)
     m, sinusoids = generate_sin_bundle()
     df = DataFrame(sinusoids, ["trace_$(x)" for x in 1:num_sinusoids])
     # Also add the modulation envelope
@@ -61,10 +60,15 @@ end
 end
 
 ## Write all these CSV files out to disk
-@distributed for idx in 0:(num_files-1)
-    @info("Generating $(idx+1)/$(num_files)")
-    generate_csv_file(idx)
+t_generating = @elapsed begin
+    for idx in 0:(num_files-1)
+        @info("Generating $(idx+1)/$(num_files)")
+        generate_csv_file(idx)
+    end
 end
+@info("Finished processing $(num_files) in $(t_generating) seconds ($(t_generating/num_files) per file)")
+results = Dict(:num_files => num_files, :time_per_file => t_generating/num_files)
+ENV["RESULTS"] = JSON3.pretty(results)
 
 ## Update new version of JuliaHub DataSet
 using DataSets, JuliaHub
@@ -80,8 +84,8 @@ using Plots
 plotlyjs()
 begin
     m, sinusoids = generate_sin_bundle()
-    plt = plot(sinusoids[:, 1:3])
+    plot(sinusoids[:, 1:3])
     results_file = "sine_bundle.png"
-    savefig(plt, results_file)
+    savefig(results_file)
     ENV["RESULTS_FILE"] = results_file
 end

@@ -3,14 +3,13 @@ if Threads.nthreads() == 1
     error("You forgot to provide threads via -t!")
 end
 
-using Distributed, JuliaHub, DataSets
+using Distributed, JuliaHub, DataSets, JSON3
 
 data_dir = tempname()
 dataset_user = "jacob_vaverka2"
-dataset_name = "parallel-computing-sinusoids"
-results_dir = tempname()
-ENV["RESULTS_FILE"] = results_dir
-plot_dir = joinpath(results_dir, "plot_outputs")
+dataset_name = "parallel_computing_sinusoids"
+plot_dir = tempname()
+ENV["RESULTS_FILE"] = plot_dir
 
 !ispath(data_dir) && mkpath(data_dir)
 !ispath(plot_dir) && mkpath(plot_dir)
@@ -20,8 +19,7 @@ plot_dir = joinpath(results_dir, "plot_outputs")
 
 # Get list of .CSV's we need to mash up
 csv_dir = tempname()
-JuliaHub.download_dataset(string(dataset_user, "/", dataset_name), csv_dir)
-csv_files = sort(filter(f -> endswith(f, ".csv"), readdir(csv_dir; join=true)))
+JuliaHub.download_dataset(JuliaHub.dataset(dataset_name), csv_dir; version=4, replace=true)
 
 # Do one processing round to precompile before we start timing
 process_data(load_csv(first(csv_files)))
@@ -89,3 +87,5 @@ wait(task_result_closer)
 t_processing = time() - t_start
 # TODO: write best pairs to `ENV["RESULTS"]`
 @info("Finished processing $(length(csv_files)) in $(t_processing) seconds ($(t_processing/length(csv_files)) per file)")
+results = Dict(:num_files => length(csv_files), :times_per_file => t_processing/length(csv_files))
+ENV["RESULTS"] = JSON3.pretty(results)

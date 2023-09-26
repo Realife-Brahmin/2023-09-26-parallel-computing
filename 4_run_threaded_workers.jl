@@ -70,7 +70,7 @@ end
 
 # `wait` on all these tasks, to ensure that they have finished cleanly
 # All tasks should eventually have a `wait()` or `fetch()` somewhere,
-# to ensure that there are no dropped 
+# to ensure that there are no dropped
 wait(task_csv_loader)
 wait(task_result_closer)
 
