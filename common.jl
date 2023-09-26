@@ -1,5 +1,6 @@
 @info("Loading packages...")
 using CSV, Plots, Scratch, Statistics, MultivariateStats, DataFrames
+plotlyjs()
 
 # Load a CSV.  We purposefully disable multithreading here, so that
 # we can more easily see the difference between our different threading

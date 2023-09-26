@@ -2,7 +2,7 @@
 include("common.jl")
 
 # Get list of .CSV's we need to mash up
-csv_dir = @get_scratch!("generated_csvs")
+csv_dir = @get_scratch!("generated_csvs_small")
 plot_dir = @get_scratch!("plot_outputs")
 csv_files = sort(filter(f -> endswith(f, ".csv"), readdir(csv_dir; join=true)))
 

@@ -6,15 +6,15 @@ begin
     # We're going to generate a bunch of noisy, random-frequency sinusoids
     # in each file, and we'll do some processing of those sinusoids
     num_files = 30
-    num_sinusoids = 2_000 # Set this to `2000` for the big CSVs
-    if num_sinusoids >= 2000
+    num_sinusoids = 200 # Set this to `2000` for the big CSVs
+    if num_sinusoids >= 2_000
         output_dir = @get_scratch!("generated_csvs")
     else
         output_dir = @get_scratch!("generated_csvs_small")
     end
-    num_datapoints = 10000
-    fs = 1000
-    
+    num_datapoints = 10_000
+    fs = 1_000
+
     center_frequency = 4
     frequency_randomization_amount = 1.5
     frequency_modulation_amount = 0.5
@@ -66,8 +66,12 @@ for idx in 0:(num_files-1)
 end
 
 ## To visualize one of these "sin bundles"
-using Plots; plotly()
+using Plots
+plotlyjs()
 begin
     m, sinusoids = generate_sin_bundle()
     plot(sinusoids[:, 1:3])
+    results_file = "sine_bundle.png"
+    savefig(results_file)
+    ENV["RESULTS_FILE"] = results_file
 end

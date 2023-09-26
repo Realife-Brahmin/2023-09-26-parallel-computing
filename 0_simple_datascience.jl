@@ -1,5 +1,5 @@
 using Plots, CSV, MultivariateStats
-plotly()
+plotlyjs()
 
 ## Setup parameters
 begin
@@ -12,7 +12,7 @@ begin
 	θ = π/3
 end
 
-## Create `data` that is N observations of 2 different 
+## Create `data` that is N observations of 2 different
 begin
 	Xform = [σ₁  0;
 			 0  σ₂] *
