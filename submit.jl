@@ -1,31 +1,35 @@
 using JuliaHub, Dates
 
 JuliaHub.submit_job(
-    JuliaHub.appbundle(@__DIR__, "1a_csv_gen.jl"),
-    ncpu=4, memory=4, nnodes=1,
-    alias="Parallel Computing - Single Process Data Generation",
-    env=Dict("NUM_SINUSOIDS" => "2000"),
+    JuliaHub.appbundle(@__DIR__, "5_create_new_dataset_batch.jl"),
+    ncpu=8, memory=8, nnodes=1,
+    alias="Parallel Computing - batch dataset upload",
+    env=Dict(
+        "NUM_SINUSOIDS" => "200",
+        "DATASET_USER" => "jacob_vaverka2",
+        "DATASET_NAME" => "small_batch_sinusoids"
+    ),
     timelimit=Hour(2)
 )
 
 JuliaHub.submit_job(
-    JuliaHub.appbundle(@__DIR__, "1b_csv_gen.jl"),
-    ncpu=4, memory=4, nnodes=11, process_per_node=true,
-    alias="Parallel Computing - Distributed Process Data Generation",
-    env=Dict("NUM_SINUSOIDS" => "2000"),
+    JuliaHub.appbundle(@__DIR__, "6_run_serial_batch.jl"),
+    ncpu=8, memory=8, nnodes=1,
+    alias="Parallel Computing - batch serial run",
+    env=Dict(
+        "DATASET_USER" => "jacob_vaverka2",
+        "DATASET_NAME" => "small_batch_sinusoids"
+    ),
     timelimit=Hour(2)
 )
 
 JuliaHub.submit_job(
-    JuliaHub.appbundle(@__DIR__, "2a_run_serial.jl"),
-    ncpu=4, memory=4, nnodes=1,
-    alias="Parallel Computing - Single Process Serial Run",
-    timelimit=Hour(2)
-)
-
-JuliaHub.submit_job(
-    JuliaHub.appbundle(@__DIR__, "4b_run_threaded_workers.jl"),
-    ncpu=4, memory=4, nnodes=11, process_per_node=true,
-    alias="Parallel Computing - Distributed Process Run",
+    JuliaHub.appbundle(@__DIR__, "7_run_threaded_workers_batch.jl"),
+    ncpu=8, memory=8, nnodes=1,
+    alias="Parallel Computing - batch threaded workers run",
+    env=Dict(
+        "DATASET_USER" => "jacob_vaverka2",
+        "DATASET_NAME" => "small_batch_sinusoids"
+    ),
     timelimit=Hour(2)
 )

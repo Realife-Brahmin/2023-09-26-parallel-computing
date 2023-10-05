@@ -3,29 +3,28 @@ if Threads.nthreads() == 1
     error("You forgot to provide threads via -t!")
 end
 
-using JuliaHub, DataSets
+using JuliaHub # Load API for accessing datasets on JuliaHub
 
-data_dir = tempname()
-dataset_user = "jacob_vaverka2"
-dataset_name = "parallel_computing_sinusoids"
+# Sipecify the username and dataset name
+dataset_user = get(ENV, "DATASET_USER", "jacob_vaverka2")
+dataset_name = get(ENV, "DATASET_NAME", "parallel_computing_sinusoids")
+
+# Get list of .CSV's we need to mash up
+csv_dir = tempname()
+JuliaHub.download_dataset(JuliaHub.dataset((dataset_user, dataset_name)), csv_dir)
+
+# Create the directory to save result files (in this case lots of image files)
 plot_dir = tempname()
-ENV["RESULTS_FILE"] = plot_dir
-
-!ispath(data_dir) && mkpath(data_dir)
 !ispath(plot_dir) && mkpath(plot_dir)
+ENV["RESULTS_FILE"] = plot_dir
 
 # Load common code
 include("common.jl")
 
-# Get list of .CSV's we need to mash up
-csv_dir = tempname()
-JuliaHub.download_dataset(string(dataset_user, "/", dataset_name), csv_dir)
-csv_files = sort(filter(f -> endswith(f, ".csv"), readdir(csv_dir; join=true)))
-
 # Do one processing round to precompile before we start timing
 process_data(load_csv(first(csv_files)))
 
-# start timing now
+# Start timing now
 t_start = time()
 
 # Create task to read in CSVs, push them onto a Channel

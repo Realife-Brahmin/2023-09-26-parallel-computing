@@ -23,7 +23,7 @@ certainly vary, but the general trend should remain true.
 > rather than from the command line. Please follow the steps below to reproduce
 > the correct timings.
 
-## How to Run
+## How to Run Local
 
 Download the source code locally or to a JuliaHub IDE.
 
@@ -66,3 +66,13 @@ julia --project --threads=auto 4_run_threaded_workers.jl
 > It is a good exercise to run a resource monitor (such as `top` or `htop`)
 > along side these examples. This can help to get a better understanding of CPU
 > and memory usage while the programs are running.
+
+## How to Run in Batch
+
+The following files have been added to demonstrate how to submit batch jobs on JuliaHub.
+Batch jobs can be submitted using the JuliaHub VS Code extention or using [`JuliaHub.jl`](https://help.juliahub.com/julia-api/stable/).
+Create an account for free and try for yourself!
+
+- `5_create_new_dataset_batch.jl` uploads a new dataset to JuliaHub using the same data generation process (this new dataset will be used in subsequent batch jobs to avoid generating it each run)
+- `6_run_serial_batch.jl` loads the uploaded dataset and executes the serial run (see the job details for graphs of the resource utilization)
+- `7_run_threaded_workers_batch.jl`loads the uploaded dataset and executes the threaded worker run (see how the resource utilization compares to the serial batch run)
