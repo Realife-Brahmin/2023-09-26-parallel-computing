@@ -2,7 +2,7 @@ using JuliaHub # Load API for accessing datasets on JuliaHub
 using JSON3 # Load package to write job RESULTS
 
 # Sipecify the username and dataset name
-dataset_user = get(ENV, "DATASET_USER", "jacob_vaverka2")
+dataset_user = get(ENV, "DATASET_USER", replace(JuliaHub.authenticate().username, "-" => "_"))
 dataset_name = get(ENV, "DATASET_NAME", "parallel_computing_sinusoids")
 
 # Get list of .CSV's we need to mash up
